@@ -24,10 +24,13 @@ Watch activity. Safe, usually, depending on resource overhead
 ![Observability tools](http://www.brendangregg.com/Perf/linux_observability_tools.png)
 ### Benchmarking
 Load test. Caution: production tests can cause issues due to contention
+![Benchmarking tools](http://www.brendangregg.com/Perf/linux_benchmarking_tools.png)
 ### Tuning
 Change. Danger: changes could hurt performance, now or later with load.
+![Tuning tools](http://www.brendangregg.com/Perf/linux_tuning_tools.png)
 ### Static
 Check configuration. Should be safe.
+![Static tools](http://www.brendangregg.com/Perf/linux_static_tools.png)
 
 ## 10 first tools to use for any performance investigation
 
