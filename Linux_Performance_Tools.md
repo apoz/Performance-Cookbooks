@@ -19,6 +19,7 @@ This repo is a quick cookbook about the tools I find to check/investigate perfor
 Reference for USE method in Linux systems: http://brendangregg.com/USEmethod/use-linux.html
 
 ## Performance tools
+[Reference](http://techblog.netflix.com/2015/08/netflix-at-velocity-2015-linux.html)
 ### Observability
 Watch activity. Safe, usually, depending on resource overhead
 ![Observability tools](http://www.brendangregg.com/Perf/linux_observability_tools.png)
