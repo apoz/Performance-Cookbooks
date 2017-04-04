@@ -29,6 +29,8 @@ Watch activity. Safe, usually, depending on resource overhead
 apoz@apoz-VirtualBox:~$ uptime
  16:33:49 up 0 min,  1 user,  load average: 1,73, 0,49, 0,17
  ```
+ On Linux systems, these numbers include processes wanting to run on CPU, as well as processes blocked in uninterruptible I/O (usually disk I/O). This gives a high level idea of resource load (or demand), but can’t be properly understood without other tools. Worth a quick look only. 
+
 * Measure of resource demand: CPU + disks
 * Time constants of 1, 5 and 15 minutes
 * If the load > # CPUs it may mean CPU saturation
@@ -64,7 +66,7 @@ KiB Swap:  1021948 total,   911256 free,   110692 used.   241016 avail Mem
 * Can consume noticeable CPU to read/process
 ##### ps
 * ps -ef -f shows the tree of processes and its status
-* it can show custom fields
+* it can show custom fields ie: ps -eo user,sz,rss,minflt,majflt,pcpu,args,
 
 ##### vmstat
 ```apoz@apoz-VirtualBox:~$ vmstat -Sm 1
@@ -99,6 +101,87 @@ Device:         rrqm/s   wrqm/s     r/s     w/s    rMB/s    wMB/s avgrq-sz avgqu
 ```
 * Block I/O (disk) stats
 * Usage example: iostat -xmdz 1
+
+##### mpstat
+```
+apoz@apoz-VirtualBox:~$ mpstat -P ALL
+Linux 4.4.0-31-generic (apoz-VirtualBox)     02/04/17     _x86_64_    (1 CPU)
+
+23:27:53     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+23:27:53     all    6,48    0,50    1,18    0,31    0,00    0,11    0,00    0,00    0,00   91,42
+23:27:53       0    6,48    0,50    1,18    0,31    0,00    0,11    0,00    0,00    0,00   91,42
+```
+* Multi-processor statistics, per cpu
+* Look for unbalanced workloads, hot CPUs.
+
+##### free
+```
+apoz@apoz-VirtualBox:~$ free -m
+              total        used        free      shared  buff/cache   available
+Mem:            968         547         106           6         314         251
+Swap:           997         142         855
+```
+* Main memory usage
+* Buffers: block device I/O cache
+* cached: virtual page cache
+
+
+#### Intermediate Tools
+##### strace
+* System call tracer
+```
+strace -tttT -p PID
+```
+* -ttt: time (us) since epoch; -T: syscall time (s)
+* Translates syscall args
+* Currently has massive overhead (ptrace based)
+** can slow the target by >100x. *Use extreme caution*
+##### tcpdump
+* Sniff network packets for post analysis
+* CPU overhead optimized, but use with caution.
+##### netstat
+* Various network protocol statistics using -s
+* A multi-tool:
+** -i: interface states
+** -r: route table
+** default: list conns
+* netstat -p: show process details!
+* Per-second interval with -c
+##### nicstat
+* Network interfaces stats, iostat-like output
+* Check network throughput and interface % util
+##### pidstat
+* very useful process stat. Eg: by thread, disk I/O...
+##### swapon
+* Shows swap device usage
+##### lsof
+* File descriptor usage
+##### sar
+* System activity reporter
+* sar -n TCP,ETCP,DEV,EDEV 1
+![SAR](http://www.brendangregg.com/Perf/linux_observability_sar)
+
+
+#### Advanced Tools
+##### ss
+ More socket statistics.
+##### iptraf
+##### iotop
+ * Block device I/O (disk) by process
+ * Needs kernel support enabled (CONFIG_TASK_IO_ACCOUNTING)
+
+##### slabtop
+* Kernel slab allocator memory usage
+##### pcstat
+* Show page cache residency by file
+* Example 'pcstat data0ASTERISK'
+* Uses the mincore(2) syscall. Useful for database performance analysis.
+##### tiptip
+* IPC by process, %MISS, %BUS
+##### rdmsr
+* Model specific Registers (MSR), unlike PMCs can be read by default in Xen:
+- Timestamp clock, temp, power...
+
 
 
 ### Benchmarking
